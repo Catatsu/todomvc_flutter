@@ -9,3 +9,12 @@ build/
 ios/.generated/
 packages
 .flutter-plugins
+
+# See https://www.dartlang.org/tools/private-files.html
+
+# Files and directories created by pub
+pubspec.lock
+
+# Directory created by dartdoc
+# If you don't generate documentation locally you can remove this line.
+doc/api/
