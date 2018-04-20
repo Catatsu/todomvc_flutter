@@ -4,6 +4,58 @@ import 'package:english_words/english_words.dart';
 //void main() => runApp(new MyApp());
 void main() => runApp(new TabBarDemo());
 
+// One entry in the multilevel list displayed by this app.
+class Entry {
+  Entry({this.title, this.isChecked:false, this.description});
+  String title;
+  String description;
+  bool isChecked;
+}
+
+List<Entry> todoList = <Entry>[
+  new Entry(title:'Chapter A', isChecked:true, description:""),
+  new Entry(title:'Chapter B', isChecked:false),
+  new Entry(title:'Chapter C'),
+];
+
+class TodoEntryItem extends StatefulWidget {
+  const TodoEntryItem(this.entry);
+
+  final Entry entry;
+
+  @override
+  createState() => new TodoEntryItemState();
+}
+
+class TodoEntryItemState extends State<TodoEntryItem> {
+  final _biggerFont = const TextStyle(fontSize: 18.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildRow(widget.entry);
+  }
+
+  Widget _buildRow(Entry pair) {
+    return new ListTile(
+      title: new Text(
+        pair.title,
+        style: _biggerFont,
+      ),
+      leading: new Icon(
+        widget.entry.isChecked ? Icons.check_box : Icons.check_box_outline_blank,
+        color: widget.entry.isChecked ? Colors.red : null,
+      ),
+      onTap: () {
+        setState(() {
+          widget.entry.isChecked = !widget.entry.isChecked;
+        });
+      },
+
+
+    );
+  }
+}
+
 class RandomWords extends StatefulWidget {
   @override
   createState() => new RandomWordsState();
@@ -19,29 +71,13 @@ class RandomWordsState extends State<RandomWords> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold (
-      body: _buildSuggestions(),
-    );
-  }
-
-  Widget _buildSuggestions() {
-    return new ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          // Add a one-pixel-high divider widget before each row in theListView.
-          if (i.isOdd) return new Divider();
-
-          // The syntax "i ~/ 2" divides i by 2 and returns an integer result.
-          // For example: 1, 2, 3, 4, 5 becomes 0, 1, 1, 2, 2.
-          // This calculates the actual number of word pairings in the ListView,
-          // minus the divider widgets.
-          final index = i ~/ 2;
-          // If you've reached the end of the available word pairings...
-          if (index >= _suggestions.length) {
-            // ...then generate 10 more and add them to the suggestions list.
-            _suggestions.addAll(generateWordPairs().take(10));
+      body: new ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: todoList.length,
+          itemBuilder: (context, i) {
+            return new TodoEntryItem(todoList[i]);
           }
-          return _buildRow(_suggestions[index]);
-        }
+      ),
     );
   }
 
@@ -105,9 +141,9 @@ class TabBarDemoState extends State {
           body: new Stack(
             children: <Widget>[
               new Offstage(
-                offstage: index != 1,
+                offstage: index != 0,
                 child: new TickerMode(
-                  enabled: index == 1,
+                  enabled: index == 0,
                     child: new RandomWords(),
 //                  child: new Row(
 //                    children: <Widget>[
@@ -119,10 +155,10 @@ class TabBarDemoState extends State {
                 ),
               ),
               new Offstage(
-                offstage: index != 0,
+                offstage: index != 1,
                 child: new TickerMode(
-                  enabled: index == 0,
-                  child: new Text("hello"),
+                  enabled: index == 1,
+                  child: new Text("stats(まだない!)"),
                 ),
               ),
             ],
