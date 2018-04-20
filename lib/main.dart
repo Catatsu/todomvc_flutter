@@ -32,13 +32,9 @@ class TodoEntryItemState extends State<TodoEntryItem> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildRow(widget.entry);
-  }
-
-  Widget _buildRow(Entry pair) {
     return new ListTile(
       title: new Text(
-        pair.title,
+        widget.entry.title,
         style: _biggerFont,
       ),
       leading: new Icon(
@@ -50,24 +46,16 @@ class TodoEntryItemState extends State<TodoEntryItem> {
           widget.entry.isChecked = !widget.entry.isChecked;
         });
       },
-
-
     );
   }
 }
 
-class RandomWords extends StatefulWidget {
+class TodoListWidget extends StatefulWidget {
   @override
-  createState() => new RandomWordsState();
+  createState() => new TodoListWidgetState();
 }
 
-class RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-
-  final _biggerFont = const TextStyle(fontSize: 18.0);
-
-  final _saved = new Set<WordPair>();
-
+class TodoListWidgetState extends State<TodoListWidget> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold (
@@ -80,33 +68,6 @@ class RandomWordsState extends State<RandomWords> {
       ),
     );
   }
-
-  Widget _buildRow(WordPair pair) {
-    final alreadySaved = _saved.contains(pair);
-
-    return new ListTile(
-      title: new Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
-      leading: new Icon(
-        alreadySaved ? Icons.check_box : Icons.check_box_outline_blank,
-        color: alreadySaved ? Colors.red : null,
-      ),
-      onTap: () {
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
-      },
-
-
-    );
-  }
-
 }
 
 
@@ -144,7 +105,7 @@ class TabBarDemoState extends State {
                 offstage: index != 0,
                 child: new TickerMode(
                   enabled: index == 0,
-                    child: new RandomWords(),
+                    child: new TodoListWidget(),
 //                  child: new Row(
 //                    children: <Widget>[
 //                      new Checkbox(value: false, onChanged: null),
