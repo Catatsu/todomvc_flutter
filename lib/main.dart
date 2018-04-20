@@ -78,7 +78,7 @@ class ListDemoState extends State {
 
   }
 }
-class TabBarDemoState extends State {
+class TabBarDemoState extends State<TabBarDemo> {
   int index = 0;
 
   @override
@@ -148,7 +148,7 @@ class TabBarDemoState extends State {
           floatingActionButton: new FloatingActionButton(
             tooltip: 'Increment',
             child: new Icon(Icons.add),
-            onPressed: _pushSaved,
+            onPressed: _addTodo,
           ), // This trailing comma makes auto-formatting nicer for build methods.
         ),
       ),
@@ -157,12 +157,23 @@ class TabBarDemoState extends State {
     return app;
   }
 
-  void _pushSaved() {}
+  void _addTodo() {
+    Navigator.of(context).push(
+      new MaterialPageRoute(
+        builder: (context) {
+          return new Scaffold(
+            appBar: new AppBar(
+              title: new Text('AddTodo'),
+            ),
+            body: new Text('test')
+          );
+        },
+      ),
+    );
+  }
 }
 
 class TabBarDemo extends StatefulWidget {
   @override
-  State createState() {
-    return new TabBarDemoState();
-  }
+  createState() => new TabBarDemoState();
 }
