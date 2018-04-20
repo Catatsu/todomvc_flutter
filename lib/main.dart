@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 
 //void main() => runApp(new MyApp());
-void main() => runApp(new TabBarDemo());
+void main() => runApp(new MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      home: new TabBarDemo()
+    );
+  }
+}
 
 // One entry in the multilevel list displayed by this app.
 class Entry {
@@ -84,8 +93,7 @@ class TabBarDemoState extends State<TabBarDemo> {
   @override
   Widget build(BuildContext context) {
     print("build start");
-    Widget app = new MaterialApp(
-      home: new DefaultTabController(
+    Widget app = new DefaultTabController(
         length: 2,
         child: new Scaffold(
           appBar: new AppBar(
@@ -105,7 +113,7 @@ class TabBarDemoState extends State<TabBarDemo> {
                 offstage: index != 0,
                 child: new TickerMode(
                   enabled: index == 0,
-                    child: new TodoListWidget(),
+                  child: new TodoListWidget(),
 //                  child: new Row(
 //                    children: <Widget>[
 //                      new Checkbox(value: false, onChanged: null),
@@ -151,8 +159,7 @@ class TabBarDemoState extends State<TabBarDemo> {
             onPressed: _addTodo,
           ), // This trailing comma makes auto-formatting nicer for build methods.
         ),
-      ),
-    );
+      );
     print("build end");
     return app;
   }
@@ -162,10 +169,10 @@ class TabBarDemoState extends State<TabBarDemo> {
       new MaterialPageRoute(
         builder: (context) {
           return new Scaffold(
-            appBar: new AppBar(
-              title: new Text('AddTodo'),
-            ),
-            body: new Text('test')
+              appBar: new AppBar(
+                title: new Text('AddTodo'),
+              ),
+              body: new Text('test')
           );
         },
       ),

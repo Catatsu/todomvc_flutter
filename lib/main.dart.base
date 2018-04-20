@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+import 'package:english_words/english_words.dart';
+
+void main() => runApp(new MyApp());
+//void main() => runApp(new TabBarDemo());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'Startup Name Generator',
+      theme: new ThemeData(
+        primaryColor: Colors.white,
+      ),
+      home: new RandomWords(),
+    );
+  }
+}
+
+// One entry in the multilevel list displayed by this app.
+class Entry {
+  Entry({this.title, this.isChecked: false, this.description});
+
+  String title;
+  String description;
+  bool isChecked;
+}
+
+List<Entry> todoList = <Entry>[
+  new Entry(title: 'Chapter A', isChecked: true, description: ""),
+  new Entry(title: 'Chapter B', isChecked: false),
+  new Entry(title: 'Chapter C'),
+];
+
+class TodoEntryItem extends StatefulWidget {
+  const TodoEntryItem(this.entry);
+
+  final Entry entry;
+
+  @override
+  createState() => new TodoEntryItemState();
+}
+
+class TodoEntryItemState extends State<TodoEntryItem> {
+  final _biggerFont = const TextStyle(fontSize: 18.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return new ListTile(
+      title: new Text(
+        widget.entry.title,
+        style: _biggerFont,
+      ),
+      leading: new Icon(
+        widget.entry.isChecked
+            ? Icons.check_box
+            : Icons.check_box_outline_blank,
+        color: widget.entry.isChecked ? Colors.red : null,
+      ),
+      onTap: () {
+        setState(() {
+          widget.entry.isChecked = !widget.entry.isChecked;
+        });
+      },
+    );
+  }
+}
+
+class TodoListWidget extends StatefulWidget {
+  @override
+  createState() => new TodoListWidgetState();
+}
+
+class TodoListWidgetState extends State<TodoListWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: todoList.length,
+          itemBuilder: (context, i) {
+            return new TodoEntryItem(todoList[i]);
+          }),
+    );
+  }
+}
+
+class RandomWordsState extends State<RandomWords> {
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Startup Name Generator'),
+        actions: <Widget>[
+          new IconButton(icon: new Icon(Icons.list), onPressed: _pushSaved)
+        ],
+      ),
+      body: _buildSuggestions(),
+    );
+  }
+
+  Widget _buildSuggestions() {
+    return new Text("うごかんんんん");
+  }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      new MaterialPageRoute(
+        builder: (context) {
+          return new Scaffold(
+            appBar: new AppBar(
+              title: new Text('Saved Suggestions'),
+            ),
+            body: new Text("にがめんめ"),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class RandomWords extends StatefulWidget {
+  @override
+  createState() => new RandomWordsState();
+}
