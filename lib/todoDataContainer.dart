@@ -27,6 +27,11 @@ class TodoListContainer extends StatefulWidget {
 class TodoListContainerState extends State<TodoListContainer> {
   final List<Entry> _todoList = new List<Entry>();
 
+  ActivityIndicatorMixin listener;
+  void addLoadingEndListener(ActivityIndicatorMixin mixin) {
+    listener = mixin;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +56,9 @@ class TodoListContainerState extends State<TodoListContainer> {
       setState(() {
         _todoList.addAll(gotEntries);
       });
+      if (listener != null) {
+        listener.onLodingCompleted();
+      }
     });
   }
 

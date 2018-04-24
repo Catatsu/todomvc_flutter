@@ -90,12 +90,24 @@ class TodoListWidget extends StatefulWidget {
   createState() => new TodoListWidgetState();
 }
 
-class TodoListWidgetState extends State<TodoListWidget> {
+class TodoListWidgetState extends State<TodoListWidget>
+    with ActivityIndicatorMixin {
   TodoListWidgetState();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // インジケータ開始
+    showIndicator(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     TodoListContainerState container = TodoListContainer.of(context);
+
+    // 通信が終わったらインジケータを止めるために教えてもらう
+    container.addLoadingEndListener(this);
 
     return new Scaffold(
       body: new ListView.builder(
