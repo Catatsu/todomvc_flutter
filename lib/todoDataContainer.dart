@@ -1,4 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:todomvc/data.dart';
 
 class TodoListContainer extends StatefulWidget {
@@ -22,6 +26,33 @@ class TodoListContainer extends StatefulWidget {
 
 class TodoListContainerState extends State<TodoListContainer> {
   final List<Entry> _todoList = new List<Entry>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future<http.Response> future =
+        http.get('https://morning-ocean-78789.herokuapp.com/tasks');
+    future.then((http.Response response) {
+      final List<dynamic> responseJsonList = json.decode(response.body);
+      // List responseJsonList = [Map, Map, Map, Map...]
+      //       ↓
+      //       map
+      //       ↓
+      // List entries = [Entry, Entry, Entry, Entry...]
+      final Iterable<Entry> gotEntries = responseJsonList.map<Entry>((rawMap) {
+        String title = rawMap['name'];
+        String desc = rawMap['description'];
+        bool isChecked = rawMap['status'] == 'completed';
+        Entry entry =
+            new Entry(title: title, description: desc, isChecked: isChecked);
+        return entry;
+      });
+      setState(() {
+        _todoList.addAll(gotEntries);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +87,6 @@ class TodoListContainerState extends State<TodoListContainer> {
       entry.title = title;
       entry.description = desc;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 }
 
