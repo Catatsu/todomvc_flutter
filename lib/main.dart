@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:todomvc/addTodo.dart';
 import 'package:todomvc/data.dart';
 import 'package:todomvc/detail.dart';
+import 'package:todomvc/stats.dart';
 import 'package:todomvc/todoDataContainer.dart';
 
 //void main() => runApp(new MyApp());
@@ -137,20 +138,13 @@ class TabBarDemoState extends State<TabBarDemo> {
               child: new TickerMode(
                 enabled: index == 0,
                 child: new TodoListWidget(),
-//                  child: new Row(
-//                    children: <Widget>[
-//                      new Checkbox(value: false, onChanged: null),
-//                      new Text(
-//                          "aasfdadsfafdsafafdasfasdfasd"),
-//                    ],
-//                  ),
               ),
             ),
             new Offstage(
               offstage: index != 1,
               child: new TickerMode(
                 enabled: index == 1,
-                child: new StatsWidget(),
+                child: new StatsScreen(),
               ),
             ),
           ],

@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:todomvc/data.dart';
+import 'package:todomvc/todoDataContainer.dart';
 
 class EditTodoScreenState extends State<EditTodoScreen> {
-  final titleController = new TextEditingController();
-  final descController = new TextEditingController();
+  TextEditingController titleController;
+  TextEditingController descController;
   bool _isButtonDisabled = true;
 
   BuildContext _context;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = new TextEditingController(text: widget.entry.title);
+    descController = new TextEditingController(text: widget.entry.description);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,15 +52,17 @@ class EditTodoScreenState extends State<EditTodoScreen> {
   }
 
   void _save() {
-    Entry entry = new Entry(
-        title: titleController.text, description: descController.text);
-    //todoList.add(entry);
-    Navigator.pop(_context, entry);
-    //Navigator.of(_context).pop<Entry>(entry);
+    TodoListContainerState container = TodoListContainer.of(context);
+    container.updateEntry(
+        widget.entry, titleController.text, descController.text);
+    Navigator.pop(_context);
   }
 
   String _editing(String a) {
-    if (titleController.text.length > 0 && descController.text.length > 0) {
+    if (titleController.text.length > 0 &&
+        descController.text.length > 0 &&
+        (titleController.text != widget.entry.title ||
+            descController.text != widget.entry.description)) {
       setState(() {
         _isButtonDisabled = false;
       });

@@ -31,13 +31,13 @@ class TodoListContainerState extends State<TodoListContainer> {
     );
   }
 
-  int getTotoListLength() {
-    return _todoList.length;
-  }
+  int getTotoListLength() => _todoList.length;
 
-  Entry getEntry(int index) {
-    return _todoList[index];
-  }
+  int getCheckedNum() => _todoList.where((entry) => entry.isChecked).length;
+
+  int getUncheckedNum() => _todoList.where((entry) => !entry.isChecked).length;
+
+  Entry getEntry(int index) => _todoList[index];
 
   void addEntry(Entry newEntry) {
     setState(() {
@@ -48,6 +48,13 @@ class TodoListContainerState extends State<TodoListContainer> {
   void removeEntry(Entry entry) {
     setState(() {
       _todoList.remove(entry);
+    });
+  }
+
+  void updateEntry(Entry entry, String title, String desc) {
+    setState(() {
+      entry.title = title;
+      entry.description = desc;
     });
   }
 
