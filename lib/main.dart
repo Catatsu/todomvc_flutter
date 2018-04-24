@@ -33,6 +33,7 @@ class TodoEntryItemState extends State<TodoEntryItem> {
 
   @override
   Widget build(BuildContext context) {
+    print("TodoEntryItemState build");
     return new ListTile(
       leading: new IconButton(
           icon: new Icon(
@@ -55,7 +56,7 @@ class TodoEntryItemState extends State<TodoEntryItem> {
           context,
           new MaterialPageRoute<Entry>(
             builder: (context) {
-              return new DetailScreen(widget.entry.title);
+              return new DetailScreen(widget.entry);
             },
           ),
         );
