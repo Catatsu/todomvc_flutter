@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:todomvc/addTodo.dart';
 import 'package:todomvc/data.dart';
 import 'package:todomvc/detail.dart';
+import 'package:todomvc/todoDataContainer.dart';
 
 //void main() => runApp(new MyApp());
-void main() => runApp(new MyApp());
+void main() => runApp(new TodoListContainer(child: new MyApp()));
 
 class MyApp extends StatelessWidget {
   @override
@@ -12,12 +13,6 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(home: new TabBarDemo());
   }
 }
-
-List<Entry> initialTodoList = <Entry>[
-  new Entry(title: 'Chapter A', isChecked: true, description: ""),
-  new Entry(title: 'Chapter B', isChecked: false),
-  new Entry(title: 'Chapter C'),
-];
 
 class TodoEntryItem extends StatefulWidget {
   const TodoEntryItem(this.entry);
@@ -88,27 +83,25 @@ class StatsWidgetState extends State<StatsWidget> {
 }
 
 class TodoListWidget extends StatefulWidget {
-  final List<Entry> todoList;
-
-  TodoListWidget(this.todoList);
+  TodoListWidget();
 
   @override
-  createState() => new TodoListWidgetState(this.todoList);
+  createState() => new TodoListWidgetState();
 }
 
 class TodoListWidgetState extends State<TodoListWidget> {
-  final List<Entry> todoList;
-
-  TodoListWidgetState(this.todoList);
+  TodoListWidgetState();
 
   @override
   Widget build(BuildContext context) {
+    TodoListContainerState container = TodoListContainer.of(context);
+
     return new Scaffold(
       body: new ListView.builder(
           padding: const EdgeInsets.all(16.0),
-          itemCount: this.todoList.length,
+          itemCount: container.getTotoListLength(),
           itemBuilder: (context, i) {
-            return new TodoEntryItem(this.todoList[i]);
+            return new TodoEntryItem(container.getEntry(i));
           }),
     );
   }
@@ -117,9 +110,7 @@ class TodoListWidgetState extends State<TodoListWidget> {
 class TabBarDemoState extends State<TabBarDemo> {
   int index = 0;
 
-  final List<Entry> todoList;
-
-  TabBarDemoState({this.todoList});
+  TabBarDemoState();
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +136,7 @@ class TabBarDemoState extends State<TabBarDemo> {
               offstage: index != 0,
               child: new TickerMode(
                 enabled: index == 0,
-                child: new TodoListWidget(this.todoList),
+                child: new TodoListWidget(),
 //                  child: new Row(
 //                    children: <Widget>[
 //                      new Checkbox(value: false, onChanged: null),
@@ -195,6 +186,8 @@ class TabBarDemoState extends State<TabBarDemo> {
   }
 
   void _addTodo() {
+    TodoListContainerState container = TodoListContainer.of(context);
+
     Navigator.push<Entry>(
       context,
       new MaterialPageRoute<Entry>(
@@ -207,7 +200,7 @@ class TabBarDemoState extends State<TabBarDemo> {
       setState(() {
         print(value);
         //todoList.add(new Entry(title: "test", description: "AAA"));
-        todoList.add(value);
+        container.addEntry(value);
       });
     });
   }
@@ -215,5 +208,5 @@ class TabBarDemoState extends State<TabBarDemo> {
 
 class TabBarDemo extends StatefulWidget {
   @override
-  createState() => new TabBarDemoState(todoList: initialTodoList);
+  createState() => new TabBarDemoState();
 }

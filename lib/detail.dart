@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:todomvc/data.dart';
 import 'package:todomvc/editTodo.dart';
+import 'package:todomvc/todoDataContainer.dart';
 
 class DetailScreen extends StatefulWidget {
   final Entry entry;
@@ -107,6 +108,10 @@ class _DetailScreenState extends State<DetailScreen> {
     _askedToLead().then((value) {
       print("Owari");
       print(value);
+      TodoListContainerState container = TodoListContainer.of(context);
+      container.removeEntry(widget.entry);
+
+      Navigator.pop(context);
     });
     print("_deleteTodo end");
   }
@@ -116,7 +121,7 @@ class _DetailScreenState extends State<DetailScreen> {
       context,
       new MaterialPageRoute(
         builder: (context) {
-          return new EditTodoScreen();
+          return new EditTodoScreen(widget.entry);
         },
       ),
     );

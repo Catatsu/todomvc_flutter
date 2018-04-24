@@ -1,13 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:todomvc/data.dart';
 
-class EditTodoScreen extends StatefulWidget {
-  @override
-  createState() => new _EditTodoScreenState();
-}
+class EditTodoScreenState extends State<EditTodoScreen> {
+  final titleController = new TextEditingController();
+  final descController = new TextEditingController();
+  bool _isButtonDisabled = true;
 
-class _EditTodoScreenState extends State<EditTodoScreen> {
+  BuildContext _context;
+
   @override
   Widget build(BuildContext context) {
-    return new Container();
+    _context = context;
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('EditTodo'),
+        actions: <Widget>[
+          new FlatButton(
+              onPressed: _isButtonDisabled ? null : _save,
+              disabledTextColor: new Color(0x55FFFFFF),
+              textColor: new Color(0xFFFFFFFF),
+              child: new Text('保存', style: new TextStyle(fontSize: 20.1)))
+        ],
+      ),
+      body: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Text('タイトル'),
+          new TextField(
+            controller: titleController,
+            onChanged: _editing,
+          ),
+          new Text('詳細'),
+          new TextField(
+            controller: descController,
+            keyboardType: TextInputType.multiline,
+            maxLines: 5,
+            onChanged: _editing,
+          ),
+        ],
+      ),
+      //body: new Text('title'));
+    );
   }
+
+  void _save() {
+    Entry entry = new Entry(
+        title: titleController.text, description: descController.text);
+    //todoList.add(entry);
+    Navigator.pop(_context, entry);
+    //Navigator.of(_context).pop<Entry>(entry);
+  }
+
+  String _editing(String a) {
+    if (titleController.text.length > 0 && descController.text.length > 0) {
+      setState(() {
+        _isButtonDisabled = false;
+      });
+    } else {
+      setState(() {
+        _isButtonDisabled = true;
+      });
+    }
+    return a;
+  }
+}
+
+class EditTodoScreen extends StatefulWidget {
+  final Entry entry;
+
+  EditTodoScreen(
+    this.entry,
+  );
+
+  @override
+  createState() => new EditTodoScreenState();
 }
