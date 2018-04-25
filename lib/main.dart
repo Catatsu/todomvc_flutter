@@ -29,7 +29,7 @@ class TodoEntryItemState extends State<TodoEntryItem> {
 
   @override
   Widget build(BuildContext context) {
-    print("TodoEntryItemState build");
+    //print("TodoEntryItemState build");
     return new ListTile(
       leading: new IconButton(
           icon: new Icon(
@@ -66,28 +66,6 @@ class TodoEntryItemState extends State<TodoEntryItem> {
   }
 }
 
-class StatsWidget extends StatefulWidget {
-  @override
-  createState() => new StatsWidgetState();
-}
-
-class StatsWidgetState extends State<StatsWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return new Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          new Text("完了"),
-          new Text("0"),
-          new Text("未完了"),
-          new Text("1"),
-        ],
-      ),
-    );
-  }
-}
-
 class TodoListWidget extends StatefulWidget {
   TodoListWidget();
 
@@ -113,12 +91,20 @@ class TodoListWidgetState extends State<TodoListWidget>
 
     // 通信が終わったらインジケータを止めるために教えてもらう
     container.addLoadingEndListener(this);
-
+    print(container.widget.filterMode);
     return new Scaffold(
       body: new ListView.builder(
           padding: const EdgeInsets.all(16.0),
           itemCount: container.getTotoListLength(),
           itemBuilder: (context, i) {
+            Entry entry = container.getEntry(i);
+            if (container.widget.filterMode == FilterMode.checked &&
+                !entry.isChecked) {
+              return null;
+            } else if (container.widget.filterMode == FilterMode.unchecked &&
+                entry.isChecked) {
+              return null;
+            }
             return new TodoEntryItem(container.getEntry(i));
           }),
     );
@@ -135,7 +121,6 @@ enum RightMenu {
 
 class TabBarDemoState extends State<TabBarDemo> {
   int index = 0;
-  RightMenu _selection_right_key;
 
   TabBarDemoState();
 
@@ -150,8 +135,21 @@ class TabBarDemoState extends State<TabBarDemo> {
             new PopupMenuButton<RightMenu>(
               icon: new Icon(Icons.filter_list),
               onSelected: (RightMenu result) {
+                TodoListContainerState container =
+                    TodoListContainer.of(context);
                 setState(() {
-                  _selection_right_key = result;
+                  switch (result) {
+                    case RightMenu.non_filter:
+                      container.widget.filterMode = FilterMode.non;
+                      break;
+                    case RightMenu.filter_checked:
+                      container.widget.filterMode = FilterMode.checked;
+                      break;
+                    case RightMenu.filter_unchecked:
+                      container.widget.filterMode = FilterMode.unchecked;
+                      break;
+                    default:
+                  }
                 });
               },
               itemBuilder: (BuildContext context) =>

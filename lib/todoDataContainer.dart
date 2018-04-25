@@ -5,9 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:todomvc/data.dart';
 
+enum FilterMode {
+  non,
+  checked,
+  unchecked,
+}
+
 class TodoListContainer extends StatefulWidget {
   final Widget child;
   final List<Entry> todoList;
+  FilterMode filterMode = FilterMode.non;
 
   TodoListContainer({
     this.child, // required付けると警告でるからいったんはずす
