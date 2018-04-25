@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 
 // One entry in the multilevel list displayed by this app.
 class Entry {
-  Entry({this.title, this.isChecked: false, this.description});
+  Entry({this.title, this.isChecked: false, this.description, this.id});
   String title;
   String description;
   bool isChecked;
+  String id;
 }
 
 class ActivityIndicatorMixin {

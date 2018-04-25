@@ -49,8 +49,9 @@ class TodoListContainerState extends State<TodoListContainer> {
         String title = rawMap['name'];
         String desc = rawMap['description'];
         bool isChecked = rawMap['status'] == 'completed';
-        Entry entry =
-            new Entry(title: title, description: desc, isChecked: isChecked);
+        String id = rawMap['_id'];
+        Entry entry = new Entry(
+            title: title, description: desc, isChecked: isChecked, id: id);
         return entry;
       });
       setState(() {
@@ -79,22 +80,77 @@ class TodoListContainerState extends State<TodoListContainer> {
   Entry getEntry(int index) => _todoList[index];
 
   void addEntry(Entry newEntry) {
-    setState(() {
-      _todoList.add(newEntry);
+    //postを使用してデータの追加をしたい
+    var url = "https://morning-ocean-78789.herokuapp.com/tasks";
+    http.post(url, body: {
+      "name": newEntry.title,
+      "description": newEntry.description,
+    }).then((response) {
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      if (response.statusCode == 200) {
+        print("Success!");
+        final responseBody = json.decode(response.body);
+        newEntry.id = responseBody['_id'];
+        setState(() => _todoList.add(newEntry));
+        print(newEntry.id);
+      }
+    }).catchError((onError) {
+      print(onError.toString());
+      print("add: error");
     });
+    print(url);
   }
 
   void removeEntry(Entry entry) {
-    setState(() {
-      _todoList.remove(entry);
+    //postを使用してデータの追加をしたい
+    var url = "https://morning-ocean-78789.herokuapp.com/tasks/${entry.id}";
+    print(url);
+    http.delete(url).then((response) {
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      if (response.statusCode == 200) {
+        print("Success!");
+        setState(() => _todoList.remove(entry));
+      }
+    }).catchError((onError) {
+      print("remove: error");
     });
   }
 
-  void updateEntry(Entry entry, String title, String desc) {
-    setState(() {
-      entry.title = title;
-      entry.description = desc;
-    });
+  void updateEntryStats(Entry entry, bool isChecked) {
+    //postを使用してデータの更新をしたい
+    var url = "https://morning-ocean-78789.herokuapp.com/tasks/${entry.id}";
+    String _status = isChecked ? "completed" : "pending";
+
+    http.put(url, body: {
+      "status": _status,
+    }).then((response) {
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      setState(() {
+        entry.isChecked = isChecked;
+      });
+    }).catchError((onError) => print("upadate: error"));
+    print(url);
+  }
+
+  void updateEntryData(Entry entry, String title, String desc) {
+    //postを使用してデータの更新をしたい
+    var url = "https://morning-ocean-78789.herokuapp.com/tasks/${entry.id}";
+
+    http.put(url, body: {
+      "name": title,
+      "description": desc,
+    }).then((response) {
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      setState(() {
+        entry.title = title;
+        entry.description = desc;
+      });
+    }).catchError((onError) => print("upadate: error"));
+    print(url);
   }
 }
 

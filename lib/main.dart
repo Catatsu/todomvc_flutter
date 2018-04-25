@@ -40,7 +40,7 @@ class TodoEntryItemState extends State<TodoEntryItem> {
           ),
           onPressed: () {
             setState(() {
-              widget.entry.isChecked = !widget.entry.isChecked;
+              _save();
             });
           }),
       title: new Text(
@@ -58,6 +58,11 @@ class TodoEntryItemState extends State<TodoEntryItem> {
         );
       },
     );
+  }
+
+  void _save() {
+    TodoListContainerState container = TodoListContainer.of(context);
+    container.updateEntryStats(widget.entry, !widget.entry.isChecked);
   }
 }
 

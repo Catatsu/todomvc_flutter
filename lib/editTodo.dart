@@ -53,7 +53,7 @@ class EditTodoScreenState extends State<EditTodoScreen> {
 
   void _save() {
     TodoListContainerState container = TodoListContainer.of(context);
-    container.updateEntry(
+    container.updateEntryData(
         widget.entry, titleController.text, descController.text);
     Navigator.pop(_context);
   }
