@@ -125,8 +125,17 @@ class TodoListWidgetState extends State<TodoListWidget>
   }
 }
 
+enum RightMenu {
+  non_filter,
+  filter_checked,
+  filter_unchecked,
+  checking_all_todo,
+  remove_all_checked
+}
+
 class TabBarDemoState extends State<TabBarDemo> {
   int index = 0;
+  RightMenu _selection_right_key;
 
   TabBarDemoState();
 
@@ -138,14 +147,57 @@ class TabBarDemoState extends State<TabBarDemo> {
         appBar: new AppBar(
           title: new Text('Todo MVC'),
           actions: <Widget>[
-            new IconButton(
+            new PopupMenuButton<RightMenu>(
               icon: new Icon(Icons.filter_list),
-              onPressed: null,
+              onSelected: (RightMenu result) {
+                setState(() {
+                  _selection_right_key = result;
+                });
+              },
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<RightMenu>>[
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.non_filter,
+                      child: const Text('全てのTODOを表示'),
+                    ),
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.filter_checked,
+                      child: const Text('完了済みのTODOを表示'),
+                    ),
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.filter_unchecked,
+                      child: const Text('未完了のTODOを表示'),
+                    ),
+                  ],
             ),
-            new IconButton(
-              icon: new Icon(Icons.linear_scale),
-              onPressed: null,
-            ),
+            new PopupMenuButton<RightMenu>(
+              onSelected: (RightMenu result) {
+                TodoListContainerState container =
+                    TodoListContainer.of(context);
+                setState(() {
+                  switch (result) {
+                    case RightMenu.checking_all_todo:
+                      container.updateAllEntryStats(true);
+                      break;
+                    case RightMenu.remove_all_checked:
+                      container.removeCheckedAllEntry();
+                      break;
+                    default:
+                  }
+                });
+              },
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<RightMenu>>[
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.checking_all_todo,
+                      child: const Text('全てのTODOを完了'),
+                    ),
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.remove_all_checked,
+                      child: const Text('完了済みのTODOを削除'),
+                    ),
+                  ],
+            )
           ],
         ),
         body: new Stack(

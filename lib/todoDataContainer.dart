@@ -48,7 +48,7 @@ class TodoListContainerState extends State<TodoListContainer> {
       final Iterable<Entry> gotEntries = responseJsonList.map<Entry>((rawMap) {
         String title = rawMap['name'];
         String desc = rawMap['description'];
-        bool isChecked = rawMap['status'] == 'completed';
+        bool isChecked = rawMap['status'][0] == 'completed';
         String id = rawMap['_id'];
         Entry entry = new Entry(
             title: title, description: desc, isChecked: isChecked, id: id);
@@ -102,6 +102,12 @@ class TodoListContainerState extends State<TodoListContainer> {
     print(url);
   }
 
+  void removeCheckedAllEntry() {
+    _todoList.forEach((entry) {
+      if (entry.isChecked) removeEntry(entry);
+    });
+  }
+
   void removeEntry(Entry entry) {
     //postを使用してデータの追加をしたい
     var url = "https://morning-ocean-78789.herokuapp.com/tasks/${entry.id}";
@@ -115,6 +121,12 @@ class TodoListContainerState extends State<TodoListContainer> {
       }
     }).catchError((onError) {
       print("remove: error");
+    });
+  }
+
+  void updateAllEntryStats(bool isChecked) {
+    _todoList.forEach((entry) {
+      updateEntryStats(entry, isChecked);
     });
   }
 
