@@ -53,7 +53,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   onPressed: () {
                     setState(() {
-                      widget.entry.isChecked = !widget.entry.isChecked;
+                      _save();
                     });
                   }),
               new Text(widget.entry.title),
@@ -68,6 +68,11 @@ class _DetailScreenState extends State<DetailScreen> {
         onPressed: _editTodo,
       ),
     );
+  }
+
+  void _save() {
+    TodoListContainerState container = TodoListContainer.of(context);
+    container.updateEntryStats(widget.entry, !widget.entry.isChecked);
   }
 
   Future<Department> _askedToLead() async {

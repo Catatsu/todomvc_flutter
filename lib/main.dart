@@ -29,7 +29,7 @@ class TodoEntryItemState extends State<TodoEntryItem> {
 
   @override
   Widget build(BuildContext context) {
-    print("TodoEntryItemState build");
+    //print("TodoEntryItemState build");
     return new ListTile(
       leading: new IconButton(
           icon: new Icon(
@@ -40,7 +40,7 @@ class TodoEntryItemState extends State<TodoEntryItem> {
           ),
           onPressed: () {
             setState(() {
-              widget.entry.isChecked = !widget.entry.isChecked;
+              _save();
             });
           }),
       title: new Text(
@@ -59,27 +59,10 @@ class TodoEntryItemState extends State<TodoEntryItem> {
       },
     );
   }
-}
 
-class StatsWidget extends StatefulWidget {
-  @override
-  createState() => new StatsWidgetState();
-}
-
-class StatsWidgetState extends State<StatsWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return new Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          new Text("完了"),
-          new Text("0"),
-          new Text("未完了"),
-          new Text("1"),
-        ],
-      ),
-    );
+  void _save() {
+    TodoListContainerState container = TodoListContainer.of(context);
+    container.updateEntryStats(widget.entry, !widget.entry.isChecked);
   }
 }
 
@@ -108,16 +91,32 @@ class TodoListWidgetState extends State<TodoListWidget>
 
     // 通信が終わったらインジケータを止めるために教えてもらう
     container.addLoadingEndListener(this);
-
+    print(container.widget.filterMode);
     return new Scaffold(
       body: new ListView.builder(
           padding: const EdgeInsets.all(16.0),
           itemCount: container.getTotoListLength(),
           itemBuilder: (context, i) {
+            Entry entry = container.getEntry(i);
+            if (container.widget.filterMode == FilterMode.checked &&
+                !entry.isChecked) {
+              return null;
+            } else if (container.widget.filterMode == FilterMode.unchecked &&
+                entry.isChecked) {
+              return null;
+            }
             return new TodoEntryItem(container.getEntry(i));
           }),
     );
   }
+}
+
+enum RightMenu {
+  nonFilter,
+  filterChecked,
+  filterUnchecked,
+  checkingAllTodo,
+  removeAllChecked
 }
 
 class TabBarDemoState extends State<TabBarDemo> {
@@ -133,14 +132,70 @@ class TabBarDemoState extends State<TabBarDemo> {
         appBar: new AppBar(
           title: new Text('Todo MVC'),
           actions: <Widget>[
-            new IconButton(
+            new PopupMenuButton<RightMenu>(
               icon: new Icon(Icons.filter_list),
-              onPressed: null,
+              onSelected: (RightMenu result) {
+                TodoListContainerState container =
+                    TodoListContainer.of(context);
+                setState(() {
+                  switch (result) {
+                    case RightMenu.nonFilter:
+                      container.widget.filterMode = FilterMode.non;
+                      break;
+                    case RightMenu.filterChecked:
+                      container.widget.filterMode = FilterMode.checked;
+                      break;
+                    case RightMenu.filterUnchecked:
+                      container.widget.filterMode = FilterMode.unchecked;
+                      break;
+                    default:
+                  }
+                });
+              },
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<RightMenu>>[
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.nonFilter,
+                      child: const Text('全てのTODOを表示'),
+                    ),
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.filterChecked,
+                      child: const Text('完了済みのTODOを表示'),
+                    ),
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.filterUnchecked,
+                      child: const Text('未完了のTODOを表示'),
+                    ),
+                  ],
             ),
-            new IconButton(
-              icon: new Icon(Icons.linear_scale),
-              onPressed: null,
-            ),
+            new PopupMenuButton<RightMenu>(
+              onSelected: (RightMenu result) {
+                TodoListContainerState container =
+                    TodoListContainer.of(context);
+                setState(() {
+                  switch (result) {
+                    case RightMenu.checkingAllTodo:
+                      container.updateAllEntryStats(true);
+                      break;
+                    case RightMenu.removeAllChecked:
+                      container.removeCheckedAllEntry();
+                      break;
+                    default:
+                  }
+                });
+              },
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<RightMenu>>[
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.checkingAllTodo,
+                      child: const Text('全てのTODOを完了'),
+                    ),
+                    const PopupMenuItem<RightMenu>(
+                      value: RightMenu.removeAllChecked,
+                      child: const Text('完了済みのTODOを削除'),
+                    ),
+                  ],
+            )
           ],
         ),
         body: new Stack(
