@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todomvc/data.dart';
-import 'package:todomvc/todoDataContainer.dart';
+import 'package:todomvc/model/data.dart';
+import 'package:todomvc/model/todoDataContainer.dart';
 
 class EditTodoScreenState extends State<EditTodoScreen> {
   TextEditingController titleController;

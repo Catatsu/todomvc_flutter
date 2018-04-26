@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todomvc/todoDataContainer.dart';
+import 'package:todomvc/model/todoDataContainer.dart';
 
 class StatsScreen extends StatefulWidget {
   @override

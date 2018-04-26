@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todomvc/data.dart';
+import 'package:todomvc/model/data.dart';
 
 class AddTodoScreenState extends State<AddTodoScreen> {
   final titleController = new TextEditingController();

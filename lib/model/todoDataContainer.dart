@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:todomvc/data.dart';
+import 'package:todomvc/model/data.dart';
 
 enum FilterMode {
-  non,
+  none,
   checked,
   unchecked,
 }
@@ -14,7 +14,7 @@ enum FilterMode {
 class TodoListContainer extends StatefulWidget {
   final Widget child;
   final List<Entry> todoList;
-  FilterMode filterMode = FilterMode.non;
+  FilterMode filterMode = FilterMode.none;
 
   TodoListContainer({
     this.child, // required付けると警告でるからいったんはずす
@@ -78,6 +78,12 @@ class TodoListContainerState extends State<TodoListContainer> {
     );
   }
 
+  void updateFilterMode(FilterMode newFilter) {
+    setState(() {
+      widget.filterMode = newFilter;
+    });
+  }
+
   int getTotoListLength() => _todoList.length;
 
   int getCheckedNum() => _todoList.where((entry) => entry.isChecked).length;
@@ -85,6 +91,29 @@ class TodoListContainerState extends State<TodoListContainer> {
   int getUncheckedNum() => _todoList.where((entry) => !entry.isChecked).length;
 
   Entry getEntry(int index) => _todoList[index];
+
+  List<Entry> getTodoList() => _todoList;
+
+  void removeFilterEntry([FilterMode filterMode = FilterMode.none]) {
+    switch (filterMode) {
+      case FilterMode.checked:
+        _todoList.removeWhere((Entry entry) => entry.isChecked);
+        break;
+      case FilterMode.unchecked:
+        _todoList.removeWhere((Entry entry) => !entry.isChecked);
+        break;
+      case FilterMode.none:
+      default:
+        _todoList.clear();
+        break;
+    }
+  }
+
+  List<Entry> getCheckedTodoList() =>
+      _todoList.where((entry) => entry.isChecked).toList();
+
+  List<Entry> getUncheckedTodoList() =>
+      _todoList.where((entry) => !entry.isChecked).toList();
 
   void addEntry(Entry newEntry) {
     //postを使用してデータの追加をしたい
@@ -104,15 +133,29 @@ class TodoListContainerState extends State<TodoListContainer> {
       }
     }).catchError((onError) {
       print(onError.toString());
-      print("add: error");
+      print('add: error');
     });
     print(url);
   }
 
-  void removeCheckedAllEntry() {
-    _todoList.forEach((entry) {
-      if (entry.isChecked) removeEntry(entry);
+  Future<bool> removeEntries(List<Entry> list) {
+    List<Future<http.Response>> futures = list.map((entry) {
+      var url = "https://morning-ocean-78789.herokuapp.com/tasks/${entry.id}";
+      return http.delete(url);
+    }).toList();
+
+    return Future.wait(futures).then((List<http.Response> responseList) {
+      // 指定されたエントリを削除
+      setState(() {
+        list.forEach(_todoList.remove);
+      });
+
+      // 要求の結果を返す(true/false)
+      bool isSucceeded =
+          responseList.every((http.Response res) => res.statusCode == 200);
+      return new Future.value(isSucceeded);
     });
+    //TODO: エラー処理かんがえてない
   }
 
   void removeEntry(Entry entry) {
@@ -132,9 +175,23 @@ class TodoListContainerState extends State<TodoListContainer> {
   }
 
   void updateAllEntryStats(bool isChecked) {
-    _todoList.forEach((entry) {
-      updateEntryStats(entry, isChecked);
+    List<Future<http.Response>> futures = _todoList.map((entry) {
+      var url = "https://morning-ocean-78789.herokuapp.com/tasks/${entry.id}";
+      String _status = isChecked ? "completed" : "pending";
+      return http.put(url, body: {
+        "status": _status,
+      });
+    }).toList();
+
+    Future.wait(futures).then((List<http.Response> _) {
+      // httpリクエストが全部返ってきたら、一度にチェック状態を更新する
+      setState(() {
+        _todoList.forEach((entry) {
+          entry.isChecked = isChecked;
+        });
+      });
     });
+    //TODO: エラー処理かんがえてない
   }
 
   void updateEntryStats(Entry entry, bool isChecked) {
