@@ -9,25 +9,30 @@ For help getting started with Flutter, view our online
 
 ## API
 
-Todoリストの取得と追加
+### Todoリストの取得と追加
 https://morning-ocean-78789.herokuapp.com/tasks
-get
-post
+ - get
+ - post
 
-Todo１件に対する操作
+### Todo１件に対する操作
 https://morning-ocean-78789.herokuapp.com/tasks/{taskid}
-get 取得
-put 更新
-delete 削除
+ - get 取得
+ - put 更新
+ - delete 削除
 
-<GETの例>
+#### <GETの例>
+```bash
 curl https://morning-ocean-78789.herokuapp.com/tasks
+```
 
-<POSTの例>
+#### <POSTの例>
+```bash
 curl -H 'Content-Type:application/json' -d '{"name":"Test"}' https://morning-ocean-78789.herokuapp.com/tasks
+```
 
-<データ構造>
-    name: {
+### <データ構造>
+```
+    name: {
         type: String,
         required: 'Kindly enter the name of the task'
     },
@@ -46,3 +51,4 @@ curl -H 'Content-Type:application/json' -d '{"name":"Test"}' https://morning-oce
         }],
         default: ['pending']
     }
+```
