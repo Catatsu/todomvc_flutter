@@ -112,11 +112,11 @@ class TodoListWidgetState extends State<TodoListWidget>
 }
 
 enum RightMenu {
-  non_filter,
-  filter_checked,
-  filter_unchecked,
-  checking_all_todo,
-  remove_all_checked
+  nonFilter,
+  filterChecked,
+  filterUnchecked,
+  checkingAllTodo,
+  removeAllChecked
 }
 
 class TabBarDemoState extends State<TabBarDemo> {
@@ -139,13 +139,13 @@ class TabBarDemoState extends State<TabBarDemo> {
                     TodoListContainer.of(context);
                 setState(() {
                   switch (result) {
-                    case RightMenu.non_filter:
+                    case RightMenu.nonFilter:
                       container.widget.filterMode = FilterMode.non;
                       break;
-                    case RightMenu.filter_checked:
+                    case RightMenu.filterChecked:
                       container.widget.filterMode = FilterMode.checked;
                       break;
-                    case RightMenu.filter_unchecked:
+                    case RightMenu.filterUnchecked:
                       container.widget.filterMode = FilterMode.unchecked;
                       break;
                     default:
@@ -155,15 +155,15 @@ class TabBarDemoState extends State<TabBarDemo> {
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<RightMenu>>[
                     const PopupMenuItem<RightMenu>(
-                      value: RightMenu.non_filter,
+                      value: RightMenu.nonFilter,
                       child: const Text('全てのTODOを表示'),
                     ),
                     const PopupMenuItem<RightMenu>(
-                      value: RightMenu.filter_checked,
+                      value: RightMenu.filterChecked,
                       child: const Text('完了済みのTODOを表示'),
                     ),
                     const PopupMenuItem<RightMenu>(
-                      value: RightMenu.filter_unchecked,
+                      value: RightMenu.filterUnchecked,
                       child: const Text('未完了のTODOを表示'),
                     ),
                   ],
@@ -174,10 +174,10 @@ class TabBarDemoState extends State<TabBarDemo> {
                     TodoListContainer.of(context);
                 setState(() {
                   switch (result) {
-                    case RightMenu.checking_all_todo:
+                    case RightMenu.checkingAllTodo:
                       container.updateAllEntryStats(true);
                       break;
-                    case RightMenu.remove_all_checked:
+                    case RightMenu.removeAllChecked:
                       container.removeCheckedAllEntry();
                       break;
                     default:
@@ -187,11 +187,11 @@ class TabBarDemoState extends State<TabBarDemo> {
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<RightMenu>>[
                     const PopupMenuItem<RightMenu>(
-                      value: RightMenu.checking_all_todo,
+                      value: RightMenu.checkingAllTodo,
                       child: const Text('全てのTODOを完了'),
                     ),
                     const PopupMenuItem<RightMenu>(
-                      value: RightMenu.remove_all_checked,
+                      value: RightMenu.removeAllChecked,
                       child: const Text('完了済みのTODOを削除'),
                     ),
                   ],
